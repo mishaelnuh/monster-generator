@@ -1,4 +1,4 @@
-# mish-dish
+# dish
 
 ## Project setup
 ```
