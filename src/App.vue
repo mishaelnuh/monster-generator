@@ -22,7 +22,6 @@
                   <ul>
                     <li><a href="https://monsternames-api.com">monsternames-api.com</a></li>
                     <li><a href="https://thesimpsonsquoteapi.glitch.me/">thesimpsonsquoteapi.glitch.me</a></li>
-                    <li><a href="https://www.thecolorapi.com/">www.thecolorapi.com</a></li>
                   </ul>
                   <v-divider class="my-4"></v-divider>
                   Select monster type
@@ -117,17 +116,13 @@ export default {
         .then(res => {
           return res.json()
         })
-      const fetchContrastColor = fetch('https://www.thecolorapi.com/id?hex=' + randomColor)
-        .then(res => {
-          return res.json()
-        })
-      Promise.all([fetchName, fetchQuote, fetchContrastColor]).then(vals =>{
+      Promise.all([fetchName, fetchQuote]).then(vals =>{
         this.generatedMonsters.push({
           name: vals[0],
           type: this.monsterTypes[this.selectedMonsterTab].name,
           quote: vals[1][0].quote,
           backgroundColor: '#' + randomColor,
-          darkCard: vals[2].contrast.value != '#000000',
+          darkCard: this.isDarkCard(randomColor),
           roboHashPath: 'https://robohash.org/' + encodeURIComponent(vals[0].fullName) + '?set=set2'
         })
       })
@@ -139,6 +134,14 @@ export default {
         color += letters[Math.floor(Math.random() * 16)]
       }
       return color
+    },
+    isDarkCard(hex) {
+      const rLinear = Math.pow(parseInt('0x' + hex.substring(0, 2)) / 255, 2.2)
+      const gLinear = Math.pow(parseInt('0x' + hex.substring(2, 4)) / 255, 2.2)
+      const bLinear = Math.pow(parseInt('0x' + hex.substring(4, 6)) / 255, 2.2)
+      const y = 0.2126*rLinear + 0.7152*gLinear + 0.0722*bLinear
+      
+      return y < 0.5
     }
   },
   mounted() {
