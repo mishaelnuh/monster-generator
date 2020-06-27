@@ -13,41 +13,57 @@
         <v-row>
           <v-col xs="12" sm="6" md="4" lg="3" xl="2">
             <v-card outlined style="height: 100%;">
-              <v-card-title>
-                Generate a Monster
-              </v-card-title>
-              <v-card-text>
-                Utilises the following APIs to generate monster cards:
-                <ul>
-                  <a href="https://monsternames-api.com"><li>monsternames-api.com</li></a>
-                  <a href="https://thesimpsonsquoteapi.glitch.me/"><li>thesimpsonsquoteapi.glitch.me</li></a>
-                  <a href="https://www.thecolorapi.com/"><li>www.thecolorapi.com</li></a>
-                </ul>
-                <v-divider class="my-4"></v-divider>
-                Select monster type
-                <v-chip-group column mandatory active-class="primary--text" v-model="selectedMonsterTab">
-                  <v-chip v-for="type in monsterTypes" :key="type.name">{{type.name}}</v-chip>
-                </v-chip-group>
-              </v-card-text>
-              <v-card-actions>
-                <v-btn large text @click="getMonster">
-                  Generate
-                </v-btn>
-              </v-card-actions>
+              <v-responsive :aspect-ratio="5/7">
+                <v-card-title>
+                  Generate a Monster
+                </v-card-title>
+                <v-card-text>
+                  Utilises the following APIs to generate monster cards:
+                  <ul>
+                    <li><a href="https://monsternames-api.com">monsternames-api.com</a></li>
+                    <li><a href="https://thesimpsonsquoteapi.glitch.me/">thesimpsonsquoteapi.glitch.me</a></li>
+                    <li><a href="https://www.thecolorapi.com/">www.thecolorapi.com</a></li>
+                  </ul>
+                  <v-divider class="my-4"></v-divider>
+                  Select monster type
+                  <v-chip-group column mandatory active-class="primary--text" v-model="selectedMonsterTab">
+                    <v-chip v-for="type in monsterTypes" :key="type.name">{{type.name}}</v-chip>
+                  </v-chip-group>
+                </v-card-text>
+                <v-card-actions>
+                  <v-btn large text @click="getMonster">
+                    Generate
+                  </v-btn>
+                  <v-btn large text @click="removeAll">
+                    Clear all
+                  </v-btn>
+                </v-card-actions>
+              </v-responsive>
             </v-card>
           </v-col>
           <v-col xs="12" sm="6" md="4" lg="3" xl="2" v-for="(monster, index) in generatedMonsters.slice().reverse()" :key="index">
             <v-card :dark="monster.darkCard" :color="monster.backgroundColor">
-              <v-card-title>{{monster.name.fullName}}</v-card-title>
-              <v-card-subtitle>{{monster.type}}</v-card-subtitle>
-              <v-container>
-                <v-img :src="monster.roboHashPath"></v-img>
-                <v-card-text class="mx-auto black--text pa-2" style="background: #fafafa; border-radius: 0 0 6px 6px; overflow-y: scroll; height: 100px; text-align: justify; line-height: 130%;">
-                  <i>
-                    {{monster.quote}}
-                  </i>
-                </v-card-text>
-              </v-container>
+              <v-responsive :aspect-ratio="5/7">
+                <v-row>
+                  <v-col cols="11" class="py-0">
+                    <v-card-title>{{monster.name.fullName}}</v-card-title>
+                    <v-card-subtitle>{{monster.type}}</v-card-subtitle>
+                  </v-col>
+                  <v-col cols="1">
+                    <v-btn x-small light depressed absolute right fab @click="removeCard(index)">
+                      <v-icon>mdi-delete</v-icon>
+                    </v-btn>
+                  </v-col>
+                </v-row>
+                <v-container style="height: 100%;">
+                  <v-img :src="monster.roboHashPath" style="margin-top: -30px;" contain></v-img>
+                  <v-card-text class="mx-auto mt-4 pb-0 black--text pa-2" style="background: #fafafa; height: 100%; border-radius: 6px 6px 0 0; text-align: justify; font-size: 60%; line-height: 130%;">
+                    <i>
+                      {{monster.quote}}
+                    </i>
+                  </v-card-text>
+                </v-container>
+              </v-responsive>
             </v-card>
           </v-col>
         </v-row>
@@ -85,6 +101,12 @@ export default {
     }
   },
   methods: {
+    removeCard(index) {
+      this.generatedMonsters.splice(this.generatedMonsters.length - index - 1, 1)
+    },
+    removeAll() {
+      this.generatedMonsters.splice(0, this.generatedMonsters.length)
+    },
     getMonster() {
       const randomColor = this.getRandomColor()
       const fetchName = fetch('https://monsternames-api.com' + this.monsterTypes[this.selectedMonsterTab].endpoint)
@@ -123,11 +145,8 @@ export default {
     if (localStorage.generatedMonsters) {
       this.generatedMonsters = JSON.parse(localStorage.getItem('generatedMonsters'))
     }
-    if (localStorage.currentMonsterType) {
+    if (localStorage.selectedMonsterTab) {
       this.selectedMonsterTab = JSON.parse(localStorage.getItem('selectedMonsterTab'))
-    }
-    if (this.generatedMonsters.length == 0) {
-      this.getMonster()
     }
   }
 };
