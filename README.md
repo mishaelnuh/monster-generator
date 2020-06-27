@@ -1,4 +1,4 @@
-# dish
+# monster-generator
 
 ## Project setup
 ```
