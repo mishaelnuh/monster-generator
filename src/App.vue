@@ -106,7 +106,6 @@ export default {
           darkCard: vals[2].contrast.value != '#000000',
           roboHashPath: 'https://robohash.org/' + encodeURIComponent(vals[0].fullName) + '?set=set2'
         })
-        console.log(vals[2].contrast.value)
       })
     },
     getRandomColor() {
