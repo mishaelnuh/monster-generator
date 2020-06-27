@@ -20,8 +20,8 @@
                 Utilises the following APIs to generate monster cards:
                 <ul>
                   <a href="https://monsternames-api.com"><li>monsternames-api.com</li></a>
-                  <a href="http://thesimpsonsquoteapi.glitch.me/"><li>thesimpsonsquoteapi.glitch.me</li></a>
-                  <a href="http://www.thecolorapi.com/"><li>www.thecolorapi.com</li></a>
+                  <a href="https://thesimpsonsquoteapi.glitch.me/"><li>thesimpsonsquoteapi.glitch.me</li></a>
+                  <a href="https://www.thecolorapi.com/"><li>www.thecolorapi.com</li></a>
                 </ul>
                 <v-divider class="my-4"></v-divider>
                 Select monster type
@@ -93,7 +93,7 @@ export default {
         .then(res => {
           return res.json()
         })
-      const fetchContrastColor = fetch('http://www.thecolorapi.com/id?hex=' + randomColor)
+      const fetchContrastColor = fetch('https://www.thecolorapi.com/id?hex=' + randomColor)
         .then(res => {
           return res.json()
         })
