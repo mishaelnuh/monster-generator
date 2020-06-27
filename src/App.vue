@@ -1,9 +1,12 @@
 <template>
   <v-app>
-    <v-app-bar app dense elevate-on-scroll dark collapse-on-scroll>
+    <v-app-bar app dense elevate-on-scroll dark>
       <i class="fas fa-pastafarianism fa-lg mr-4"></i>
       <v-toolbar-title>Monster Generator</v-toolbar-title>
       <v-spacer></v-spacer>
+      <v-btn icon @click="exportCards">
+        <i class="fas fa-file-export fa-lg"></i>
+      </v-btn>
       <v-btn icon href="https://github.com/mishaelnuh/monster-generator">
         <i class="fab fa-github fa-lg"></i>
       </v-btn>
@@ -33,14 +36,14 @@
                   <v-btn large text @click="getMonster">
                     Generate
                   </v-btn>
-                  <v-btn large text @click="removeAll">
+                  <v-btn large text @click="removeAllCards">
                     Clear all
                   </v-btn>
                 </v-card-actions>
               </v-responsive>
             </v-card>
           </v-col>
-          <v-col xs="12" sm="6" md="4" lg="3" xl="2" v-for="(monster, index) in generatedMonsters.slice().reverse()" :key="index">
+          <v-col xs="12" sm="6" md="4" lg="3" xl="2" v-for="(monster, index) in generatedMonsters.slice().reverse()" :key="index" ref="generatedMonsters">
             <v-card :dark="monster.darkCard" :color="monster.backgroundColor">
               <v-responsive :aspect-ratio="5/7">
                 <v-row>
@@ -49,7 +52,7 @@
                     <v-card-subtitle>{{monster.type}}</v-card-subtitle>
                   </v-col>
                   <v-col cols="1">
-                    <v-btn x-small light depressed absolute right fab @click="removeCard(index)">
+                    <v-btn x-small light depressed absolute right fab @click="removeCard(index)" v-show="!hideCardOrnaments">
                       <v-icon>mdi-delete</v-icon>
                     </v-btn>
                   </v-col>
@@ -72,6 +75,9 @@
 </template>
 
 <script>
+import jsPDF from 'jspdf'
+import html2canvas from 'html2canvas'
+
 export default {
   name: 'App',
 
@@ -89,7 +95,8 @@ export default {
     ],
     currentMonsterType: null,
     selectedMonsterTab: 0,
-    generatedMonsters: []
+    generatedMonsters: [],
+    hideCardOrnaments: false,
   }),
   watch: {
     generatedMonsters(updatedMonsters) {
@@ -103,7 +110,7 @@ export default {
     removeCard(index) {
       this.generatedMonsters.splice(this.generatedMonsters.length - index - 1, 1)
     },
-    removeAll() {
+    removeAllCards() {
       this.generatedMonsters.splice(0, this.generatedMonsters.length)
     },
     getMonster() {
@@ -116,17 +123,25 @@ export default {
         .then(res => {
           return res.json()
         })
-      Promise.all([fetchName, fetchQuote]).then(vals =>{
-        this.generatedMonsters.push({
-          name: vals[0],
-          type: this.monsterTypes[this.selectedMonsterTab].name,
-          quote: vals[1][0].quote,
-          backgroundColor: '#' + randomColor,
-          darkCard: this.isDarkCard(randomColor),
-          roboHashPath: 'https://robohash.org/' + encodeURIComponent(vals[0].fullName) + '?set=set2'
+      Promise.all([fetchName, fetchQuote])
+        .then(vals => {
+          return {
+            name: vals[0],
+            type: this.monsterTypes[this.selectedMonsterTab].name,
+            quote: vals[1][0].quote,
+            backgroundColor: '#' + randomColor,
+            darkCard: this.isDarkCard(randomColor),
+            roboHashPath: 'https://robohash.org/' + encodeURIComponent(vals[0].fullName) + '?set=set2'
+          }
         })
-      })
-    },
+        .then(newCard => {
+          this.toDataURL(newCard.roboHashPath)
+            .then(res => {
+              newCard.roboHashPath = res
+              this.generatedMonsters.push(newCard)
+            })
+        })
+      },
     getRandomColor() {
       const letters = '0123456789ABCDEF'
       var color = ''
@@ -142,6 +157,49 @@ export default {
       const y = 0.2126*rLinear + 0.7152*gLinear + 0.0722*bLinear
       
       return y < 0.5
+    },
+    exportCards() {
+      var doc = new jsPDF('p', 'in', [180, 252])
+      var docWidth = doc.internal.pageSize.getWidth()
+      var docHeight = doc.internal.pageSize.getHeight()
+
+      var promiseArray = []
+      this.hideCardOrnaments = true
+      for (var i = 0; i < this.generatedMonsters.length; i++) {
+        var canvasElement = document.createElement('canvas')
+        promiseArray.push(
+          html2canvas(this.$refs.generatedMonsters[i], {
+            canvas: canvasElement,
+            scale: 3,
+          })
+            .then(canvas => {
+              const image = canvas.toDataURL('image/jpeg', 1)
+              doc.addImage(image, 'JPEG', 0, 0, docWidth, docHeight)
+              doc.addPage()
+            })
+        )
+      }
+
+      Promise.all(promiseArray.reverse()).then(() => {
+        this.hideCardOrnaments = false
+        doc.deletePage(this.generatedMonsters.length + 1)
+        doc.save('monster-cards.pdf')
+      })
+    },
+    toDataURL(src, outputFormat) {
+      return new Promise(resolve => {
+        var img = new Image()
+        img.crossOrigin = 'Anonymous'
+        img.addEventListener('load', () => {
+          var canvas = document.createElement('CANVAS')
+          var ctx = canvas.getContext('2d')
+          canvas.height = img.naturalHeight
+          canvas.width = img.naturalWidth
+          ctx.drawImage(img, 0, 0)
+          resolve(canvas.toDataURL(outputFormat))
+        })
+        img.src = src
+      })
     }
   },
   mounted() {
