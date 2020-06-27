@@ -9,7 +9,7 @@
       </v-btn>
     </v-app-bar>
     <v-content>
-      <v-container fluid style="padding-bottom: 150px;">
+      <v-container fluid style="padding-bottom: 30px;">
         <v-row>
           <v-col xs="12" sm="6" md="4" lg="3" xl="2">
             <v-card outlined style="height: 100%;">
@@ -67,15 +67,13 @@
           </v-col>
         </v-row>
       </v-container>
-      <v-footer padless absolute style="height: 150px;">
-        <v-container>
-          <v-col class="text-center">
-            Made by <a href="https://www.mnuh.org/">Mishael Nuh</a>
-          </v-col>
-          <v-col class="text-center">
-            <a href="https://github.com/mishaelnuh/monster-generator"><i class="fab fa-github fa-2x"></i></a>
-          </v-col>
-        </v-container>
+      <v-footer dark padless absolute style="height: 30px;" class="px-3">
+        <v-spacer></v-spacer>
+        <div>
+          Made by <a href="https://www.mnuh.org/">Mishael Nuh</a> 
+        </div>
+        <v-spacer></v-spacer>
+        <v-btn icon small href="https://github.com/mishaelnuh/monster-generator"><i class="fab fa-github"></i></v-btn>
       </v-footer>
     </v-content>
   </v-app>
