@@ -4,15 +4,12 @@
       <i class="fas fa-pastafarianism fa-lg mr-4"></i>
       <v-toolbar-title>Monster Generator</v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn icon @click="exportCards">
-        <i class="fas fa-file-export fa-lg"></i>
-      </v-btn>
-      <v-btn icon href="https://github.com/mishaelnuh/monster-generator">
-        <i class="fab fa-github fa-lg"></i>
+      <v-btn @click="exportCards">
+        <i class="fas fa-file-export fa-lg mr-2"></i> Export PDF
       </v-btn>
     </v-app-bar>
     <v-content>
-      <v-container fluid>
+      <v-container fluid style="padding-bottom: 150px;">
         <v-row>
           <v-col xs="12" sm="6" md="4" lg="3" xl="2">
             <v-card outlined style="height: 100%;">
@@ -58,8 +55,8 @@
                   </v-col>
                 </v-row>
                 <v-container style="height: 100%;">
-                  <v-img :src="monster.roboHashPath" style="margin-top: -30px;" contain></v-img>
-                  <v-card-text class="mx-auto mt-4 pb-0 black--text pa-2" style="background: #fafafa; height: 100%; border-radius: 6px 6px 0 0; text-align: justify; font-size: 60%; line-height: 130%;">
+                  <v-img :src="monster.roboHashPath" style="margin-top: -50px;" contain></v-img>
+                  <v-card-text class="mx-auto mt-3 pb-0 black--text pa-2" style="background: #fafafa; height: 100%; border-radius: 6px 6px 0 0; text-align: justify; font-size: 60%; line-height: 130%;">
                     <i>
                       {{monster.quote}}
                     </i>
@@ -70,6 +67,16 @@
           </v-col>
         </v-row>
       </v-container>
+      <v-footer padless absolute style="height: 150px;">
+        <v-container>
+          <v-col class="text-center">
+            Made by <a href="https://www.mnuh.org/">Mishael Nuh</a>
+          </v-col>
+          <v-col class="text-center">
+            <a href="https://github.com/mishaelnuh/monster-generator"><i class="fab fa-github fa-2x"></i></a>
+          </v-col>
+        </v-container>
+      </v-footer>
     </v-content>
   </v-app>
 </template>
