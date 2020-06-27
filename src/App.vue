@@ -40,12 +40,14 @@
             <v-card :dark="monster.darkCard" :color="monster.backgroundColor">
               <v-card-title>{{monster.name.fullName}}</v-card-title>
               <v-card-subtitle>{{monster.type}}</v-card-subtitle>
-              <v-img :src="monster.roboHashPath"></v-img>
-              <v-card-text class="mx-auto black--text" style="background: #FAFAFA; overflow-y: scroll; height:100px">
-                <p>
-                  {{monster.quote}}
-                </p>
-              </v-card-text>
+              <v-container>
+                <v-img :src="monster.roboHashPath"></v-img>
+                <v-card-text class="mx-auto black--text pa-2" style="background: #fafafa; border-radius: 0 0 6px 6px; overflow-y: scroll; height: 100px; text-align: justify; line-height: 130%;">
+                  <i>
+                    {{monster.quote}}
+                  </i>
+                </v-card-text>
+              </v-container>
             </v-card>
           </v-col>
         </v-row>
