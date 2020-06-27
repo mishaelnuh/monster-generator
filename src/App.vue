@@ -1,13 +1,11 @@
 <template>
   <v-app>
-    <v-app-bar app dense elevate-on-scroll dark collapse-on-scroll="">
+    <v-app-bar app dense elevate-on-scroll dark collapse-on-scroll>
+      <i class="fas fa-pastafarianism fa-lg mr-4"></i>
       <v-toolbar-title>Monster Generator</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-btn icon href="https://github.com/mishaelnuh/monster-generator">
         <i class="fab fa-github fa-lg"></i>
-      </v-btn>
-      <v-btn icon href="https://www.mnuh.org">
-        <i class="fas fa-user fa-lg"></i>
       </v-btn>
     </v-app-bar>
     <v-content>
