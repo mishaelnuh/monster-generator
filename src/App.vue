@@ -5,28 +5,29 @@
       <v-toolbar-title>Monster Generator</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-btn @click="exportCards">
-        <i class="fas fa-file-export fa-lg mr-2"></i> Export PDF
+        <i class="fas fa-file-export fa-lg mr-2"></i> Export All
       </v-btn>
     </v-app-bar>
     <v-content>
-      <v-container fluid style="padding-bottom: 30px;">
+      <v-container style="padding-bottom: 30px;">
         <v-row>
-          <v-col xs="12" sm="6" md="4" lg="3" xl="2">
+          <v-col xs="6" sm="6" md="4" lg="3" xl="2">
             <v-card outlined style="height: 100%;">
-              <v-responsive :aspect-ratio="5/7">
+              <v-responsive>
                 <v-card-title>
                   Generate a Monster
                 </v-card-title>
-                <v-card-text>
+                <v-card-text class="caption">
                   Utilises the following APIs to generate monster cards:
                   <ul>
                     <li><a href="https://monsternames-api.com">monsternames-api.com</a></li>
+                    <li><a href="https://robohash.org/">robohash.org</a></li>
                     <li><a href="https://thesimpsonsquoteapi.glitch.me/">thesimpsonsquoteapi.glitch.me</a></li>
                   </ul>
                   <v-divider class="my-4"></v-divider>
-                  Select monster type
+                  <div class="overline">Select monster type</div>
                   <v-chip-group column mandatory active-class="primary--text" v-model="selectedMonsterTab">
-                    <v-chip v-for="type in monsterTypes" :key="type.name">{{type.name}}</v-chip>
+                    <v-chip v-for="type in monsterTypes" :key="type.name" small>{{type.name}}</v-chip>
                   </v-chip-group>
                 </v-card-text>
                 <v-card-actions>
@@ -40,41 +41,54 @@
               </v-responsive>
             </v-card>
           </v-col>
-          <v-col xs="12" sm="6" md="4" lg="3" xl="2" v-for="(monster, index) in generatedMonsters.slice().reverse()" :key="index" ref="generatedMonsters">
+          <v-col xs="6" sm="6" md="4" lg="3" xl="2" v-for="(monster, index) in generatedMonsters.slice().reverse()" :key="index" ref="generatedMonsters">
             <v-card :dark="monster.darkCard" :color="monster.backgroundColor">
               <v-responsive :aspect-ratio="5/7">
-                <v-row>
-                  <v-col cols="11" class="py-0">
-                    <v-card-title>{{monster.name.fullName}}</v-card-title>
-                    <v-card-subtitle>{{monster.type}}</v-card-subtitle>
-                  </v-col>
-                  <v-col cols="1">
-                    <v-btn x-small light depressed absolute right fab @click="removeCard(index)" v-show="!hideCardOrnaments">
-                      <v-icon>mdi-delete</v-icon>
-                    </v-btn>
-                  </v-col>
-                </v-row>
-                <v-container style="height: 100%;">
-                  <v-img :src="monster.roboHashPath" style="margin-top: -50px;" contain></v-img>
-                  <v-card-text class="mx-auto mt-3 pb-0 black--text pa-2" style="background: #fafafa; height: 100%; border-radius: 6px 6px 0 0; text-align: justify; font-size: 60%; line-height: 130%;">
+                <v-card-title>
+                  <div style="width: 100%; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;">
+                    {{monster.name.fullName}}
+                  </div>
+                </v-card-title>
+                <v-card-subtitle class="overline">{{monster.type}}</v-card-subtitle>
+                <v-container class="pt-0" style="height: 100%;">
+                  <v-img :src="monster.roboHashPath" style="margin-top: -40px;" contain></v-img>
+                  <v-card-text class="mx-auto mt-3 pt-1 pb-0 black--text pa-2 caption" style="background: #fafafa; height: 100%; border-radius: 6px 6px 0 0; line-height: 1.1;">
                     <i>
                       {{monster.quote}}
                     </i>
                   </v-card-text>
                 </v-container>
+                <div v-show="!hideCardOrnaments">
+                  <v-hover v-slot:default="{ hover }">
+                    <v-btn x-small absolute top right depressed color="error" class="mr-n5" @click="removeCard(index)">
+                      <v-icon x-small class="mr-1">mdi-delete</v-icon> {{ hover ? 'delete' : ''}}
+                    </v-btn>
+                  </v-hover>
+                  <v-hover v-slot:default="{ hover }">
+                    <v-btn x-small absolute top right depressed color="success" class="mt-6 mr-n5" @click="exportCard(index)">
+                      <v-icon x-small class="mr-1">mdi-download</v-icon> {{ hover ? 'export' : ''}}
+                    </v-btn>
+                  </v-hover>
+                </div>
               </v-responsive>
             </v-card>
           </v-col>
         </v-row>
       </v-container>
       <v-footer dark padless absolute style="height: 30px;" class="px-3">
-        <v-spacer></v-spacer>
-        <div>
-          Made by <a href="https://www.mnuh.org/">Mishael Nuh</a> 
+        <div class="overline">
+          Made by <a href="https://www.mnuh.org/" style="color: white;">Mishael Nuh</a> 
         </div>
         <v-spacer></v-spacer>
         <v-btn icon small href="https://github.com/mishaelnuh/monster-generator"><i class="fab fa-github"></i></v-btn>
       </v-footer>
+      <v-overlay :value="overlay" opacity="0.9">
+        <v-col text-align="center">
+          <div class="overline">Exporting...</div>
+          <br/>
+          <v-progress-circular indeterminate :size="70"></v-progress-circular>
+        </v-col>
+      </v-overlay>
     </v-content>
   </v-app>
 </template>
@@ -102,6 +116,7 @@ export default {
     selectedMonsterTab: 0,
     generatedMonsters: [],
     hideCardOrnaments: false,
+    overlay: false,
   }),
   watch: {
     generatedMonsters(updatedMonsters) {
@@ -163,7 +178,34 @@ export default {
       
       return y < 0.5
     },
+    exportCard(index) {
+      this.overlay = true
+
+      var doc = new jsPDF('p', 'in', [180, 252])
+      var docWidth = doc.internal.pageSize.getWidth()
+      var docHeight = doc.internal.pageSize.getHeight()
+      this.hideCardOrnaments = true
+
+      var canvasElement = document.createElement('canvas')
+      html2canvas(this.$refs.generatedMonsters[index], {
+        canvas: canvasElement,
+        scale: 3,
+      })
+        .then(canvas => {
+          this.hideCardOrnaments = false
+          const image = canvas.toDataURL('image/jpeg', 1)
+          doc.addImage(image, 'JPEG', 0, 0, docWidth, docHeight)
+          doc.save(this.generatedMonsters[this.generatedMonsters.length - 1 - index].name.fullName + '.pdf')
+          this.overlay = false
+        })
+    },
     exportCards() {
+      if (this.generatedMonsters.length == 0) {
+        return
+      }
+
+      this.overlay = true
+
       var doc = new jsPDF('p', 'in', [180, 252])
       var docWidth = doc.internal.pageSize.getWidth()
       var docHeight = doc.internal.pageSize.getHeight()
@@ -189,6 +231,7 @@ export default {
         this.hideCardOrnaments = false
         doc.deletePage(this.generatedMonsters.length + 1)
         doc.save('monster-cards.pdf')
+        this.overlay = false
       })
     },
     toDataURL(src, outputFormat) {
