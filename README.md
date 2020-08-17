@@ -1,5 +1,5 @@
 # Monster Generator
-![build-status-badge](https://github.com/mishaelnuh/website/workflows/Deploy%20GitHub%20Pages/badge.svg)
+![build-status-badge](https://github.com/mishaelnuh/monster-generator/workflows/Deploy%20GitHub%20Pages/badge.svg)
 
 [monster.mnuh.org](https://monster.mnuh.org)
 
