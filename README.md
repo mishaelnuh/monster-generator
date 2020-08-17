@@ -1,4 +1,11 @@
-# monster-generator
+# Monster Generator
+![build-status-badge](https://github.com/mishaelnuh/website/workflows/Deploy%20GitHub%20Pages/badge.svg)
+
+[monster.mnuh.org](https://monster.mnuh.org)
+
+Generate monster cards using various APIs.
+
+![example](https://www.mnuh.org/page/monstergenerator/banner.png)
 
 ## Project setup
 ```
@@ -14,11 +21,3 @@ npm run serve
 ```
 npm run build
 ```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
