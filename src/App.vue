@@ -22,7 +22,7 @@
                   <ul>
                     <li><a href="https://monsternames-api.com">monsternames-api.com</a></li>
                     <li><a href="https://robohash.org/">robohash.org</a></li>
-                    <li><a href="https://thesimpsonsquoteapi.glitch.me/">thesimpsonsquoteapi.glitch.me</a></li>
+                    <li><a href="https://api.quotable.io/">api.quotable.io</a></li>
                   </ul>
                   <v-divider class="my-4"></v-divider>
                   <div class="overline">Select monster type</div>
@@ -139,7 +139,7 @@ export default {
         .then(res => {
           return res.json()
         })
-      const fetchQuote = fetch('https://thesimpsonsquoteapi.glitch.me/quotes')
+      const fetchQuote = fetch('https://api.quotable.io/random')
         .then(res => {
           return res.json()
         })
@@ -148,7 +148,7 @@ export default {
           return {
             name: vals[0],
             type: this.monsterTypes[this.selectedMonsterTab].name,
-            quote: vals[1][0].quote,
+            quote: vals[1].content,
             backgroundColor: '#' + randomColor,
             darkCard: this.isDarkCard(randomColor),
             roboHashPath: 'https://robohash.org/' + encodeURIComponent(vals[0].fullName) + '?set=set2'
